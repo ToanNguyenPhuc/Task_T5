@@ -35,7 +35,7 @@ def get_state_image(state):
     background = encapsul.background.copy()
     draw = ImageDraw.Draw(background)
     font = ImageFont.FreeTypeFont("ImageFonts/arial.ttf", 40)
-    card_img = encapsul.img_Back
+    card_img = encapsul.img_Back.copy()
     if state is None:
         return background
     else:
