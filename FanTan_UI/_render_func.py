@@ -8,8 +8,19 @@ import numpy as np
 
 from Base.FanTan_UI import _env
 from PIL import Image, ImageEnhance
-
+class Encapsul:
+    def __init__(self) -> None:
+        self.cards = []
+        values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
+        types = [0,1,2,3]
+        self.background = Image.open(IMG_PATH + 'bg.png')
+        for i in range(len(types)):
+            for j in range(len(values)):
+                card_img = Image.open(IMG_PATH + f'{values[j] }-{types[i]}.png').resize(CARD_SIZE)
+                self.cards.append(card_img)
+encapsul = Encapsul()
 def get_description(action):
+
     card_values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
     card_suits = ["Heart", "Diamond", "Club", "Spade"]
     if action == 52:
@@ -18,10 +29,12 @@ def get_description(action):
         value = action % 13
         suit = action // 13
         return f'{card_values[value]}-{card_suits[suit]}'
+
 def get_state_image(state):
-    background = Image.open(IMG_PATH + 'bg.png')
+    background = encapsul.background.copy()
     draw = ImageDraw.Draw(background)
     font = ImageFont.FreeTypeFont("ImageFonts/arial.ttf", 40)
+    card_img = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
     if state is None:
         return background
     else:
@@ -31,8 +44,8 @@ def get_state_image(state):
         my_cards_value = my_cards % 13 + 1
         my_cards_type = my_cards // 13
         for i in range(len(my_cards)):
-            card_img = Image.open(IMG_PATH + f'{my_cards_value[i] }-{my_cards_type[i]}.png').resize(CARD_SIZE)
-            background.paste(card_img, (round(BG_SIZE[0] * 0.44 + i * 18 - len(my_cards) * 3),round(BG_SIZE[1]* 0.76 + 25)))
+            my_cards_img = encapsul.cards[my_cards[i]]
+            background.paste(my_cards_img, (round(BG_SIZE[0] * 0.44 + i * 18 - len(my_cards) * 3),round(BG_SIZE[1]* 0.76 + 25)))
         # generate my chip 
         my_chip = int(state[104])
         draw.text((round(BG_SIZE[0] * 0.53),round(BG_SIZE[1]* 0.69 )),str(my_chip),(255,255,255),font)
@@ -41,7 +54,6 @@ def get_state_image(state):
         # generate player 1 card:
         cards_len_1 = int(another_player_cards_len[0])
         for i in range(cards_len_1):
-            card_img = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
             background.paste(card_img, (round(BG_SIZE[0] * 0.18+ i * 18 ),round(BG_SIZE[1]* 0.2 + 20 )))
         # generate player 1 chip
         player1_chip = int(state[109])
@@ -49,7 +61,6 @@ def get_state_image(state):
         # generate player 2 card:
         card_len_2 = int(another_player_cards_len[1])
         for i in range(card_len_2 ):
-            card_img = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
             background.paste(card_img, (round(BG_SIZE[0] * 0.75 + i * 18 - card_len_2 * 11),round(BG_SIZE[1]* 0.2 + 20 )))
         # generate player 2 chip
         player2_chip = int(state[110])
@@ -57,7 +68,6 @@ def get_state_image(state):
         # generate player 3 cards:
         card_len_3= int(another_player_cards_len[2])
         for i in range(card_len_3):
-            card_img = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
             background.paste(card_img, (round(BG_SIZE[0] * 0.44 - i * 18 + card_len_3 * 10),round(BG_SIZE[1]* 0.06 + 25)))
         # generate player 3 chip
         player3_chip = int(state[111])
@@ -68,10 +78,11 @@ def get_state_image(state):
         value_cards_can_play = cards_can_play % 13 + 1
         type_cards_can_play = cards_can_play // 13
         for i in range(len(cards_can_play) ):
-            card_img = Image.open(IMG_PATH + f'{value_cards_can_play[i] }-{type_cards_can_play[i]}.png').resize(CARD_SIZE)
+            card_img = encapsul.cards[cards_can_play[i]]
             background.paste(card_img, (round(BG_SIZE[0] * 0.5+ i * CARD_SIZE[0] - len(cards_can_play) * 40),round(BG_SIZE[1]* 0.45)))
-    return background
 
+    return background
+ 
 class Env_components:
     def __init__(self) -> None:
         self.allGame = True
