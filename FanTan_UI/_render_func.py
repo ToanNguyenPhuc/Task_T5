@@ -14,6 +14,7 @@ class Encapsul:
         values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
         types = [0,1,2,3]
         self.background = Image.open(IMG_PATH + 'bg.png')
+        self.img_Back = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
         for i in range(len(types)):
             for j in range(len(values)):
                 card_img = Image.open(IMG_PATH + f'{values[j] }-{types[i]}.png').resize(CARD_SIZE)
@@ -34,7 +35,7 @@ def get_state_image(state):
     background = encapsul.background.copy()
     draw = ImageDraw.Draw(background)
     font = ImageFont.FreeTypeFont("ImageFonts/arial.ttf", 40)
-    card_img = Image.open(IMG_PATH + 'Card_back.png').resize(CARD_SIZE)
+    card_img = encapsul.img_Back
     if state is None:
         return background
     else:
